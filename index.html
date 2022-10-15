@@ -1,0 +1,17 @@
+<html lang="zh">
+  <head>
+    <title>鑫妹找到女朋友了么</title>
+    <style></style>
+  </head>
+  <body>
+    <div id="day"></div>
+    <script>
+      const now = new Date();
+      const start = new Date(now.getFullYear(),0,0);
+      const day = Math.floor((now - start) / (1000 * 60 * 60 *24));
+      const isLeap = (year % 4 === 0 && !(year % 100 === 0)) || year % 400 === 0;
+      const dom = document.getElementById("day");
+      dom.innerText = `今年(${day}/${isLeap?366:365})会找到女朋友的帅富忠实信仰者`
+    </script>
+  </body>
+</html>
