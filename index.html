@@ -7,7 +7,8 @@
     <div id="day"></div>
     <script>
       const now = new Date();
-      const start = new Date(now.getFullYear(),0,0);
+      const year = now.getFullYear();
+      const start = new Date(year,0,0);
       const day = Math.floor((now - start) / (1000 * 60 * 60 *24));
       const isLeap = (year % 4 === 0 && !(year % 100 === 0)) || year % 400 === 0;
       const dom = document.getElementById("day");
