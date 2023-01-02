@@ -379,7 +379,7 @@
             gap: 16px;
             justify-content: flex-end;
             width: 100%;
-            padding: 0 24px;
+            padding: 96px 24px;
             --btn-color: #333;
         }
     </style>
@@ -486,22 +486,23 @@
                 store.latestHour = hour;
                 store.latestHourDate = markDate;
             }
-            if (month === 12 && now.getDate() > 20) initSummary(store);
+            /*if (month === 12 && now.getDate() > 20) */
+            initSummary(store);
         }
         const initSummary = (store) => {
             const summary = document.getElementById("annual_summary");
             const mc = store.maxCountDate || [];
             const lh = store.latestHourDate || [];
             const texts = store.isSelf ? [
-                `今年, \n你一共监督自己找女朋友${store.count}次, 自律的生活才有找到女朋友的可能`,
-                `你最焦虑的时候在${store.maxCountMonth}月, 是因为被家里催婚了吗? `,
-                `${mc[0]}月${mc[1]}日一定是特别的一天, 这一天你打开网页${store.maxCountOfDay}次, 你肯定也在焦虑找不到女朋友怎么办吧`,
-                `${lh[0]}月${lh[1]}日这天${store.latestHour}点, 很晚了, 你还在找女朋友, 休息一下吧, 反正明年也找不到`,
+                `今年, \n你一共监督自己${store.count}次, \n自律的人生, \n才有找到女朋友的可能`,
+                `你最焦虑的时候在${store.maxCountMonth}月, \n是因为被家里催婚了吗? `,
+                `${mc[0]}月${mc[1]}日这一天,\n 一定是特别的一天, \n这一天你浏览了${store.maxCountOfDay}次, \n你肯定也在焦虑\n为什么找不到吧`,
+                `${lh[0]}月${lh[1]}日这天${store.latestHour}点, \n很晚了, \n你还在找女朋友, \n休息一下吧, \n反正明年也是找不到的`,
             ] : [
-                `今年, \n你一共监督鑫妹找女朋友${store.count}次, 监督很辛苦吧, 欺负他一下奖励自己`,
-                `你催促鑫妹最多的时候发生在${store.maxCountMonth}月, 也许这个月你在关心鑫妹吧`,
-                `${mc[0]}月${mc[1]}日一定是特别的一天, 这一天你催促了鑫妹${store.maxCountOfDay}次, 你肯定也为他着急吧`,
-                `${lh[0]}月${lh[1]}日这天${store.latestHour}点, 很晚了, 你还在监督鑫妹找女朋友, 休息一下吧, 去看个书好不好`,
+                `今年, \n你一共监督鑫妹\n去找女朋友长达${store.count}次, \n监督很辛苦吧, \n欺负他一下奖励自己吧`,
+                `你催促鑫妹最多的时候\n发生在${store.maxCountMonth}月, \n也许\n这个月你在关心鑫妹吧`,
+                `${mc[0]}月${mc[1]}日这一天,\n 一定是特别的一天, \n这一天你催促了${store.maxCountOfDay}次, \n你肯定也为鑫妹着急吧`,
+                `${lh[0]}月${lh[1]}日这天${store.latestHour}点, \n很晚了, \n你还在让鑫妹找女朋友, \n休息一下吧, \n去看个书好不好`,
             ];
             texts.forEach((x) => {
                 const dom = document.createElement("div");
