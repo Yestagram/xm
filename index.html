@@ -107,10 +107,19 @@
             box-shadow: 0.5em 0 var(--face);
         }
 
+        [data-level="11"] .face:before {
+            width: 0.2em;
+            height: 0.05em;
+            border-radius: 0.3em 0.3em 0.2em 0.2em;
+            top: 0.4em;
+            left: 0.15em;
+            box-shadow: 0.5em 0 var(--face);
+        }
+
         [data-level="0"] .face:after,
         [data-level="1"] .face:after,
         [data-level="2"] .face:after {
-            animation: smile 4s linear infinite;
+            animation: laugh 3s linear infinite;
             width: 0.2em;
             height: 0.1em;
             left: 0.4em;
@@ -131,16 +140,17 @@
         }
 
         [data-level="3"] .face:after {
-            animation: smile 4s linear infinite;
+            animation: mouth 4s linear infinite;
         }
 
         [data-level="5"] .face:after,
         [data-level="6"] .face:after,
         [data-level="7"] .face:after {
-            left: 0.4em;
-            top: 0.7em;
             width: 0.2em;
-            height: 0.05em;
+            height: 0.1em;
+            left: 0.4em;
+            top: 0.6em;
+            border-radius: 0.1em 0.1em 0.1em 0.1em;
             background: var(--face);
         }
 
@@ -165,6 +175,10 @@
             top: 0.6em;
             border-radius: 0.1em 0.1em 0.05em 0.05em;
             background: var(--face);
+        }
+
+        [data-level="11"] .face:after {
+            animation: cry-2 1s linear infinite;
         }
 
         [data-level="0"] .face-decorate,
@@ -223,6 +237,10 @@
             box-shadow: 0.5em 0 var(--decorate);
         }
 
+        [data-level="11"] .face-decorate {
+            animation: tear-2 1s linear infinite;
+        }
+
         @keyframes blink {
             0%, 5%, 15%, 100% {
                 transform: scaleY(1);
@@ -232,7 +250,16 @@
             }
         }
 
-        @keyframes smile {
+        @keyframes laugh {
+            0%, 100% {
+                transform: translateY(0) scaleY(1) scaleX(1);
+            }
+            50% {
+                transform: translateY(0.02em) scaleY(0.9) scaleX(0.9);
+            }
+        }
+
+        @keyframes mouth {
             0%, 100% {
                 transform: translateY(0);
             }
@@ -250,12 +277,30 @@
             }
         }
 
+        @keyframes tear-2 {
+            0%, 100% {
+                height: 0.45em;
+            }
+            50% {
+                height: 0.2em;
+            }
+        }
+
         @keyframes cry {
             0%, 100% {
                 transform: translateY(0) scaleY(1);
             }
             50% {
                 transform: translateY(0.02em) scaleY(0.6);
+            }
+        }
+
+        @keyframes cry-2 {
+            0%, 100% {
+                transform: translateY(0) scaleY(1.2) scaleX(0.8);
+            }
+            50% {
+                transform: translateY(0.02em) scaleY(0.6) scaleX(1);
             }
         }
     </style>
