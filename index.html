@@ -544,13 +544,15 @@
             showSummary(0);
             summary.style.display = "flex";
         }
-        const drawLots = (store) => {
+        const drawLots = (store, e) => {
             const now = new Date();
             const today = `${now.getMonth()}-${now.getDate()}`;
             const texts = ["大吉", "中吉", "小吉", "吉", "末吉", "凶", "大凶"];
             if (store.lastDraw !== today) {
                 store.lastDraw = today;
-                store.drawLots = Math.floor(Math.log10(Math.floor(Math.random() * (10 ** texts.length)))) % texts.length;
+                const award = -(Math.abs(e.x - e.y) % 4);
+                const index = Math.floor(Math.log10(Math.floor(Math.random() * (10 ** texts.length)))) % texts.length;
+                store.drawLots = index ? (index + award) % texts.length : index;
             }
             return texts[store.drawLots];
         }
@@ -577,7 +579,7 @@
             });
         });
         face.addEventListener("click", (e) => {
-            showConfirm(`今日恋爱运势:\n\n    ` + drawLots(store), true);
+            showConfirm(`今日恋爱运势:\n\n    ` + drawLots(store, e), true);
         })
         if (store.version !== VERSION) {
             upgrade();
