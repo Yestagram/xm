@@ -555,11 +555,13 @@
             return texts[store.drawLots];
         }
         const upgrade = () => {
-            const start = (store.version || 0) + 1;
-            for (let i = start; i < VERSION; i++) {
-                if (i === 1) {
-                    store.countOfYear = store.count;
-                    store.thisYear = 2023;
+            if (store.version !== undefined) {
+                const start = (store.version || 0) + 1;
+                for (let i = start; i < VERSION; i++) {
+                    if (i === 1) {
+                        store.countOfYear = store.count;
+                        store.thisYear = 2023;
+                    }
                 }
             }
             store.version = VERSION;
