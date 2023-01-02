@@ -11,32 +11,274 @@
             margin: 0;
             padding: 0;
         }
-        
-        #day {
+
+        .app {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            background: linear-gradient(45deg, #03A9F4, #673AB7) no-repeat;
             color: white;
             height: 100vh;
             width: 100%;
             font-size: 40px;
             font-weight: bold;
         }
+
+        .app[data-level="0"],
+        .app[data-level="1"],
+        .app[data-level="2"] {
+            background: linear-gradient(45deg, #f48fb1, #f06292) no-repeat;
+        }
+
+        .app[data-level="3"],
+        .app[data-level="4"],
+        .app[data-level="5"] {
+            background: linear-gradient(45deg, #03a9f4, #673ab7) no-repeat;
+        }
+
+        .app[data-level="6"],
+        .app[data-level="7"],
+        .app[data-level="8"] {
+            background: linear-gradient(45deg, #5f3c65, #420092) no-repeat;
+        }
+
+        .app[data-level="9"],
+        .app[data-level="10"],
+        .app[data-level="11"] {
+            background: linear-gradient(45deg, #3a3a3a, #0c011f) no-repeat;
+        }
+
+        #day {
+            margin-top: 24px;
+        }
+
+        #answer {
+            margin-top: 96px;
+        }
+
+        [data-level="11"] #answer {
+            text-shadow: 3px 3px #e91e63, -3px -3px #03a9f4;
+            font-size: 2em;
+        }
+
+        .face {
+            position: relative;
+            --face: #692815;
+            font-size: 240px;
+            line-height: 1;
+            height: 1em;
+            width: 1em;
+            background: linear-gradient(180deg, #f9a825, #fdd835);
+            border-radius: 50%;
+        }
+
+        [data-level="4"] .face {
+            background: linear-gradient(180deg, #cac6b5, #fdd835);
+        }
+
+        [data-level="6"] .face {
+            background: linear-gradient(180deg, #ff6e00, #ff0055);
+        }
+
+        [data-level="11"] .face {
+            background: linear-gradient(180deg, #9fa8da, #fdd835);
+        }
+
+        .face-decorate {
+            position: absolute;
+        }
+
+        .face:before, .face:after {
+            content: "";
+            position: absolute;
+            z-index: 2;
+            transition: all 0.2s ease;
+        }
+
+        .face:before {
+            animation: blink 3s linear infinite;
+            background: var(--face);
+            width: 0.1em;
+            height: 0.1em;
+            border-radius: 50%;
+            top: 0.4em;
+            left: 0.2em;
+            box-shadow: 0.5em 0 var(--face);
+        }
+
+        [data-level="0"] .face:after,
+        [data-level="1"] .face:after,
+        [data-level="2"] .face:after {
+            animation: smile 4s linear infinite;
+            width: 0.2em;
+            height: 0.1em;
+            left: 0.4em;
+            top: 0.6em;
+            border-radius: 0 0 0.1em 0.1em;
+            background: var(--face);
+        }
+
+        [data-level="3"] .face:after,
+        [data-level="4"] .face:after {
+            width: 0.3em;
+            height: 0.3em;
+            top: 0.35em;
+            left: 0.3em;
+            border-radius: 50%;
+            border: 0.05em solid transparent;
+            border-bottom-color: var(--face);
+        }
+
+        [data-level="3"] .face:after {
+            animation: smile 4s linear infinite;
+        }
+
+        [data-level="5"] .face:after,
+        [data-level="6"] .face:after,
+        [data-level="7"] .face:after {
+            left: 0.4em;
+            top: 0.7em;
+            width: 0.2em;
+            height: 0.05em;
+            background: var(--face);
+        }
+
+        [data-level="8"] .face:after,
+        [data-level="9"] .face:after {
+            width: 0.3em;
+            height: 0.3em;
+            top: 0.7em;
+            left: 0.3em;
+            border-radius: 50%;
+            border: 0.05em solid transparent;
+            border-top-color: var(--face);
+        }
+
+
+        [data-level="10"] .face:after,
+        [data-level="11"] .face:after {
+            animation: cry 1s linear infinite;
+            width: 0.2em;
+            height: 0.1em;
+            left: 0.4em;
+            top: 0.6em;
+            border-radius: 0.1em 0.1em 0.05em 0.05em;
+            background: var(--face);
+        }
+
+        [data-level="0"] .face-decorate,
+        [data-level="6"] .face-decorate {
+            --decorate: #ff6464;
+            width: 0.1em;
+            height: 0.05em;
+            left: 0.15em;
+            top: 0.55em;
+            border-radius: 50%;
+            background: var(--decorate);
+            box-shadow: 0.6em 0 var(--decorate);
+        }
+
+        [data-level="2"] .face-decorate,
+        [data-level="4"] .face-decorate,
+        [data-level="7"] .face-decorate {
+            --decorate: #8dc6ff;
+            width: 0.21em;
+            height: 0.21em;
+            border-radius: 50%;
+            background: var(--decorate);
+            left: 0.85em;
+            top: 0.15em;
+        }
+
+        [data-level="2"] .face-decorate:after,
+        [data-level="4"] .face-decorate:after,
+        [data-level="7"] .face-decorate:after {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 0.1em solid transparent;
+            border-right: 0.1em solid transparent;
+            border-bottom: 0.2em solid var(--decorate);
+            top: -0.13em;
+            left: 0;
+            right: 0;
+            margin: auto;
+            z-index: 1;
+        }
+
+        [data-level="9"] .face-decorate,
+        [data-level="10"] .face-decorate,
+        [data-level="11"] .face-decorate {
+            animation: tear 1s linear infinite;
+            --decorate: #8dc6ff;
+            width: 0.05em;
+            height: 0.45em;
+            left: 0.225em;
+            top: 0.45em;
+            border-radius: 0.1em;
+            background: var(--decorate);
+            box-shadow: 0.5em 0 var(--decorate);
+        }
+
+        @keyframes blink {
+            0%, 5%, 15%, 100% {
+                transform: scaleY(1);
+            }
+            10% {
+                transform: scaleY(0.4);
+            }
+        }
+
+        @keyframes smile {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(0.02em);
+            }
+        }
+
+        @keyframes tear {
+            0%, 100% {
+                height: 0.45em;
+            }
+            50% {
+                height: 0.4em;
+            }
+        }
+
+        @keyframes cry {
+            0%, 100% {
+                transform: translateY(0) scaleY(1);
+            }
+            50% {
+                transform: translateY(0.02em) scaleY(0.6);
+            }
+        }
     </style>
 </head>
 <body>
-<div id="day"></div>
+<div id="app" class="app">
+    <div id="face" class="face">
+        <div class="face-decorate"></div>
+    </div>
+    <div id="day"></div>
+    <div id="answer">没有</div>
+</div>
 <script>
     (function () {
+        const app = document.getElementById("app");
         const now = new Date();
         const year = now.getFullYear();
+        app.dataset.level = `${now.getMonth()}`;
         const start = new Date(year, 0, 0);
         const day = Math.floor((now - start) / (1000 * 60 * 60 * 24));
         const isLeap = (year % 4 === 0 && !(year % 100 === 0)) || year % 400 === 0;
         const dom = document.getElementById("day");
-        dom.innerText = `今年(${day}/${isLeap ? 366 : 365})会找到女朋友的帅富忠实信仰者`
+        dom.innerText = `今年(${day}/${isLeap ? 366 : 365})鑫妹找到女朋友了吗?`;
     })()
 </script>
 </body>
