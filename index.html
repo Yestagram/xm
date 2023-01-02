@@ -304,6 +304,85 @@
             }
         }
     </style>
+    <style>
+        .dialog {
+            flex-direction: column;
+            margin: auto;
+            top: 33%;
+            max-width: 450px;
+            width: 90%;
+            border: none;
+            border-radius: 8px;
+            padding: 1em;
+            z-index: 5;
+            box-shadow: 0 0 20px 5px #000000a6;
+        }
+
+        .dialog > .dialog-text {
+            color: #666;
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+
+        .dialog > .dialog-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: flex-end;
+            --btn-color: #00a7ff;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid var(--btn-color);
+            border-radius: 4px;
+            color: var(--btn-color);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .btn:hover {
+            background: var(--btn-color);
+            color: white;
+        }
+    </style>
+    <style>
+        #annual_summary {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff9c4;
+            color: black;
+            z-index: 2;
+        }
+
+        #annual_summary > .summary-text {
+            display: none;
+        }
+
+        #annual_summary > .summary-text.active {
+            display: block;
+            text-align: left;
+            padding: 24px;
+            font-size: 30px;
+            line-height: 1.5;
+        }
+
+        #annual_summary > .buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: flex-end;
+            width: 100%;
+            padding: 0 24px;
+            --btn-color: #333;
+        }
+    </style>
 </head>
 <body>
 <div id="app" class="app">
@@ -312,18 +391,160 @@
     </div>
     <div id="day"></div>
     <div id="answer">没有</div>
+    <div id="annual_summary"></div>
 </div>
+<dialog id="dialog" class="dialog">
+    <div class="dialog-text"></div>
+    <div class="dialog-buttons"></div>
+</dialog>
+
 <script>
     (function () {
-        const app = document.getElementById("app");
-        const now = new Date();
-        const year = now.getFullYear();
-        app.dataset.level = `${now.getMonth()}`;
-        const start = new Date(year, 0, 0);
-        const day = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-        const isLeap = (year % 4 === 0 && !(year % 100 === 0)) || year % 400 === 0;
-        const dom = document.getElementById("day");
-        dom.innerText = `今年(${day}/${isLeap ? 366 : 365})鑫妹找到女朋友了吗?`;
+        const storage = (name) => {
+            const _cache = {};
+            const load = () => {
+                let tmp;
+                try {
+                    tmp = JSON.parse(localStorage[name] ?? "{}");
+                } catch (ex) {
+                    tmp = {}
+                }
+                Object.assign(_cache, tmp);
+            }
+            window.addEventListener("storage", (e) => {
+                if (e.key === name) load();
+            });
+            load();
+            return new Proxy(_cache, {
+                set(target, p, value) {
+                    _cache[p] = value;
+                    localStorage[name] = JSON.stringify(_cache);
+                }
+            });
+        }
+        const btn = (text, callback) => {
+            const tmp = document.createElement("button");
+            tmp.classList.add("btn");
+            tmp.innerText = text;
+            tmp.addEventListener("click", callback);
+            return tmp;
+        }
+        const showConfirm = (msg) => new Promise((resolve) => {
+            const dialog = document.createElement("dialog");
+            dialog.classList.add("dialog");
+            const close = (result) => {
+                resolve(result);
+                dialog.close();
+                dialog.remove();
+            }
+
+            const text = document.createElement("div");
+            text.classList.add("dialog-text");
+            text.innerText = msg;
+
+            const buttons = document.createElement("div");
+            buttons.classList.add("dialog-buttons");
+            buttons.append(btn("是", () => close(true)));
+            buttons.append(btn("否", () => close(false)));
+            dialog.append(text, buttons);
+            document.body.append(dialog);
+            dialog.showModal();
+        });
+        const init = (store) => {
+            const app = document.getElementById("app");
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const today = `${month}-${now.getDate()}`;
+            const hour = now.getHours();
+            app.dataset.level = `${now.getMonth()}`;
+            const start = new Date(year, 0, 0);
+            const day = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+            const isLeap = (year % 4 === 0 && !(year % 100 === 0)) || year % 400 === 0;
+            const dom = document.getElementById("day");
+            dom.innerText = `今年(${day}/${isLeap ? 366 : 365})${store.isSelf ? "你" : "鑫妹"}\n找到女朋友了吗?`;
+            if (store.today !== today) {
+                store.today = today;
+                store.countOfDay = 0;
+            }
+            if (store.thisMonth !== month) {
+                store.thisMonth = month;
+                store.countOfMonth = 0;
+            }
+            store.countOfDay++;
+            store.countOfMonth++;
+            const markDate = [month, now.getDate()];
+            if (store.countOfDay > (store.maxCountOfDay || 0)) {
+                store.maxCountOfDay = store.countOfDay;
+                store.maxCountDate = markDate;
+            }
+            if (store.countOfMonth > (store.maxCountOfMonth || 0)) {
+                store.maxCountOfMonth = store.countOfMonth;
+                store.maxCountMonth = month;
+            }
+            if (((hour + 20) % 24) > (((store.latestHour || 19) + 20) % 24)) {
+                store.latestHour = hour;
+                store.latestHourDate = markDate;
+            }
+            if (month === 12 && now.getDate() > 20) initSummary(store);
+        }
+        const initSummary = (store) => {
+            const summary = document.getElementById("annual_summary");
+            const mc = store.maxCountDate || [];
+            const lh = store.latestHourDate || [];
+            const texts = store.isSelf ? [
+                `今年, \n你一共监督自己找女朋友${store.count}次, 自律的生活才有找到女朋友的可能`,
+                `你最焦虑的时候在${store.maxCountMonth}月, 是因为被家里催婚了吗? `,
+                `${mc[0]}月${mc[1]}日一定是特别的一天, 这一天你打开网页${store.maxCountOfDay}次, 你肯定也在焦虑找不到女朋友怎么办吧`,
+                `${lh[0]}月${lh[1]}日这天${store.latestHour}点, 很晚了, 你还在找女朋友, 休息一下吧, 反正明年也找不到`,
+            ] : [
+                `今年, \n你一共监督鑫妹找女朋友${store.count}次, 监督很辛苦吧, 欺负他一下奖励自己`,
+                `你催促鑫妹最多的时候发生在${store.maxCountMonth}月, 也许这个月你在关心鑫妹吧`,
+                `${mc[0]}月${mc[1]}日一定是特别的一天, 这一天你催促了鑫妹${store.maxCountOfDay}次, 你肯定也为他着急吧`,
+                `${lh[0]}月${lh[1]}日这天${store.latestHour}点, 很晚了, 你还在监督鑫妹找女朋友, 休息一下吧, 去看个书好不好`,
+            ];
+            texts.forEach((x) => {
+                const dom = document.createElement("div");
+                dom.classList.add("summary-text");
+                dom.innerText = x;
+                summary.append(dom);
+            });
+            let currentIndex = 0;
+            const showSummary = (index) => {
+                if (index < 0) {
+                    currentIndex = 0
+                    return;
+                }
+                if (index >= texts.length) {
+                    summary.style.display = "";
+                    return;
+                }
+                let dom;
+                dom = summary.querySelector(".summary-text.active");
+                if (dom) dom.classList.remove("active");
+                dom = summary.querySelector(`.summary-text:nth-child(${index + 1})`);
+                if (dom) dom.classList?.add("active");
+            }
+            const buttons = document.createElement("div");
+            buttons.classList.add("buttons");
+            buttons.append(btn("上一条", () => showSummary(--currentIndex)));
+            buttons.append(btn("下一条", () => showSummary(++currentIndex)));
+            summary.append(buttons);
+            showSummary(0);
+            summary.style.display = "flex";
+        }
+
+        const store = storage("XM");
+        if (!store.count) store.count = 0;
+        store.count++;
+        if (store.isSelf === undefined) {
+            showConfirm("你是鑫妹吗?").then((res) => {
+                store.isSelf = res;
+                init(store);
+            })
+        } else {
+            init(store);
+        }
     })()
 </script>
 </body>
