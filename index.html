@@ -486,8 +486,7 @@
                 store.latestHour = hour;
                 store.latestHourDate = markDate;
             }
-            /*if (month === 12 && now.getDate() > 20) */
-            initSummary(store);
+            if (month === 12 && now.getDate() > 20) initSummary(store);
         }
         const initSummary = (store) => {
             const summary = document.getElementById("annual_summary");
