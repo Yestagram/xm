@@ -322,6 +322,7 @@
             color: #666;
             font-size: 24px;
             margin-bottom: 24px;
+            white-space: pre;
         }
 
         .dialog > .dialog-buttons {
@@ -397,9 +398,9 @@
     <div class="dialog-text"></div>
     <div class="dialog-buttons"></div>
 </dialog>
-
 <script>
     (function () {
+        const VERSION = 2;
         const storage = (name) => {
             const _cache = {};
             const load = () => {
@@ -429,7 +430,7 @@
             tmp.addEventListener("click", callback);
             return tmp;
         }
-        const showConfirm = (msg) => new Promise((resolve) => {
+        const showConfirm = (msg, alert) => new Promise((resolve) => {
             const dialog = document.createElement("dialog");
             dialog.classList.add("dialog");
             const close = (result) => {
@@ -444,8 +445,13 @@
 
             const buttons = document.createElement("div");
             buttons.classList.add("dialog-buttons");
-            buttons.append(btn("是", () => close(true)));
-            buttons.append(btn("否", () => close(false)));
+            if (alert) {
+                buttons.append(btn("知道了", () => close(true)));
+            } else {
+                buttons.append(btn("是", () => close(true)));
+                buttons.append(btn("否", () => close(false)));
+            }
+
             dialog.append(text, buttons);
             document.body.append(dialog);
             dialog.showModal();
@@ -471,8 +477,13 @@
                 store.thisMonth = month;
                 store.countOfMonth = 0;
             }
+            if (store.thisYear !== year) {
+                store.thisYear = year;
+                store.countOfYear = 0;
+            }
             store.countOfDay++;
             store.countOfMonth++;
+            store.countOfYear++;
             const markDate = [month, now.getDate()];
             if (store.countOfDay > (store.maxCountOfDay || 0)) {
                 store.maxCountOfDay = store.countOfDay;
@@ -493,12 +504,12 @@
             const mc = store.maxCountDate || [];
             const lh = store.latestHourDate || [];
             const texts = store.isSelf ? [
-                `今年, \n你一共监督自己${store.count}次, \n自律的人生, \n才有找到女朋友的可能`,
+                `今年, \n你一共监督自己${store.countOfYear}次, \n自律的人生, \n才有找到女朋友的可能`,
                 `你最焦虑的时候在${store.maxCountMonth}月, \n是因为被家里催婚了吗? `,
                 `${mc[0]}月${mc[1]}日这一天,\n 一定是特别的一天, \n这一天你浏览了${store.maxCountOfDay}次, \n你肯定也在焦虑\n为什么找不到吧`,
                 `${lh[0]}月${lh[1]}日这天${store.latestHour}点, \n很晚了, \n你还在找女朋友, \n休息一下吧, \n反正明年也是找不到的`,
             ] : [
-                `今年, \n你一共监督鑫妹\n去找女朋友长达${store.count}次, \n监督很辛苦吧, \n欺负他一下奖励自己吧`,
+                `今年, \n你一共监督鑫妹\n去找女朋友长达${store.countOfYear}次, \n监督很辛苦吧, \n欺负他一下奖励自己吧`,
                 `你催促鑫妹最多的时候\n发生在${store.maxCountMonth}月, \n也许\n这个月你在关心鑫妹吧`,
                 `${mc[0]}月${mc[1]}日这一天,\n 一定是特别的一天, \n这一天你催促了${store.maxCountOfDay}次, \n你肯定也为鑫妹着急吧`,
                 `${lh[0]}月${lh[1]}日这天${store.latestHour}点, \n很晚了, \n你还在让鑫妹找女朋友, \n休息一下吧, \n去看个书好不好`,
@@ -533,8 +544,42 @@
             showSummary(0);
             summary.style.display = "flex";
         }
+        const drawLots = (store) => {
+            const now = new Date();
+            const today = `${now.getMonth()}-${now.getDate()}`;
+            const texts = ["大吉", "中吉", "小吉", "吉", "末吉", "凶", "大凶"];
+            if (store.lastDraw !== today) {
+                store.lastDraw = today;
+                store.drawLots = Math.floor(Math.log10(Math.floor(Math.random() * (10 ** texts.length)))) % texts.length;
+            }
+            return texts[store.drawLots];
+        }
+        const upgrade = () => {
+            const start = (store.version || 0) + 1;
+            for (let i = start; i < VERSION; i++) {
+                if (i === 1) {
+                    store.countOfYear = store.count;
+                    store.thisYear = 2023;
+                }
+            }
+            store.version = VERSION;
+        }
 
         const store = storage("XM");
+        const face = document.getElementById("face");
+        face.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+            showConfirm("你是鑫妹吗?").then((res) => {
+                store.isSelf = res;
+                init(store);
+            });
+        });
+        face.addEventListener("click", (e) => {
+            showConfirm(`今日恋爱运势:\n\n    ` + drawLots(store), true);
+        })
+        if (store.version !== VERSION) {
+            upgrade();
+        }
         if (!store.count) store.count = 0;
         store.count++;
         if (store.isSelf === undefined) {
