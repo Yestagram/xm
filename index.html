@@ -608,6 +608,7 @@
             }
             store.version = VERSION;
         }
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
         const voiceEffect = (frequency) => {
             const oscillator = audioCtx.createOscillator();
