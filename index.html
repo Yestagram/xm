@@ -4,6 +4,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
+    <meta property="og:title" content="鑫妹找到女朋友了么?"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://yestagram.github.io/xm/"/>
+    <meta property="og:image" content="https://yestagram.github.io/xm/avatar.jpg"/>
     <title>鑫妹找到女朋友了么?</title>
     <style>
         * {
@@ -50,11 +54,14 @@
         }
 
         #day {
+            cursor: pointer;
             margin-top: 24px;
+            text-shadow: -2px 2px 6px #00000099;
         }
 
         #answer {
             margin-top: 96px;
+            text-shadow: -2px 2px 6px #00000099;
         }
 
         [data-level="11"] #answer {
@@ -72,6 +79,15 @@
             background: linear-gradient(180deg, #f9a825, #fdd835);
             border-radius: 50%;
             flex-shrink: 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: grab;
+            box-shadow: -6px 6px 32px 15px #00000040;
+        }
+
+        .face:active {
+            transform: scale(0.95);
+            cursor: grabbing;
+            box-shadow: -6px 6px 32px 15px #00000040;
         }
 
         [data-level="4"] .face {
@@ -402,6 +418,10 @@
 <script>
     (function () {
         const VERSION = 2;
+        const FREQUENCY = [0, 196.00, 220.00, 246.94, 261.63, 293.66, 329.63, 349.23];
+        const S1 = [1, 1, 5, 5, 6, 6, 5, 4, 4, 3, 3, 2, 2, 1];
+        const S2 = [5, 5, 4, 4, 3, 3, 2];
+        const SHEET = [...S1, ...S2, ...S2, ...S1];
         const storage = (name) => {
             const _cache = {};
             const load = () => {
@@ -424,6 +444,20 @@
                 }
             });
         }
+
+        function debounce(func, wait = 500, immediate = false) {
+            let timeout;
+            return function (...args) {
+                const callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    timeout = null;
+                    if (!immediate) func.apply(this, args);
+                }, wait);
+                if (callNow) func.apply(this, args);
+            };
+        }
+
         const btn = (text, callback) => {
             const tmp = document.createElement("button");
             tmp.classList.add("btn");
@@ -502,6 +536,26 @@
         }
         const initSummary = (store) => {
             const summary = document.getElementById("annual_summary");
+            const showSummary = (act) => {
+                const index = (+summary.dataset.active || 0) + (act || 0);
+                const max = +summary.dataset.loaded || 0;
+                if (index < 0 || index >= max) {
+                    summary.style.display = "";
+                    summary.dataset.active = "0"
+                    return;
+                }
+                summary.dataset.active = `${index}`;
+                let dom;
+                dom = summary.querySelector(".summary-text.active");
+                if (dom) dom.classList.remove("active");
+                dom = summary.querySelector(`.summary-text:nth-child(${index + 1})`);
+                if (dom) dom.classList?.add("active");
+            }
+            if (summary.dataset.loaded) {
+                summary.style.display = "flex";
+                showSummary();
+                return;
+            }
             const mc = store.maxCountDate || [];
             const lh = store.latestHourDate || [];
             const texts = store.isSelf ? [
@@ -521,29 +575,14 @@
                 dom.innerText = x;
                 summary.append(dom);
             });
-            let currentIndex = 0;
-            const showSummary = (index) => {
-                if (index < 0) {
-                    currentIndex = 0
-                    return;
-                }
-                if (index >= texts.length) {
-                    summary.style.display = "";
-                    return;
-                }
-                let dom;
-                dom = summary.querySelector(".summary-text.active");
-                if (dom) dom.classList.remove("active");
-                dom = summary.querySelector(`.summary-text:nth-child(${index + 1})`);
-                if (dom) dom.classList?.add("active");
-            }
             const buttons = document.createElement("div");
             buttons.classList.add("buttons");
-            buttons.append(btn("上一条", () => showSummary(--currentIndex)));
-            buttons.append(btn("下一条", () => showSummary(++currentIndex)));
+            buttons.append(btn("上一条", () => showSummary(-1)));
+            buttons.append(btn("下一条", () => showSummary(1)));
             summary.append(buttons);
-            showSummary(0);
             summary.style.display = "flex";
+            summary.dataset.loaded = `${texts.length}`;
+            showSummary();
         }
         const drawLots = (store, e) => {
             const now = new Date();
@@ -569,6 +608,20 @@
             }
             store.version = VERSION;
         }
+        const voiceEffect = (frequency) => {
+            const audioCtx = new AudioContext();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.type = 'sine';
+            oscillator.frequency.value = frequency;
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 0.01);
+            oscillator.start(audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);
+            oscillator.stop(audioCtx.currentTime + 1);
+        }
         const bindClick = (el, onClick, onDoubleClick, delay = 200) => {
             let lastClick = 0;
             let clickCheck = null;
@@ -585,17 +638,26 @@
         }
 
         const store = storage("XM");
-        bindClick(document.getElementById("face"), (e) => {
+        bindClick(document.getElementById("day"), (e) => {
             showConfirm(`今日恋爱运势:\n\n    ` + drawLots(store, e), true);
         }, () => {
             showConfirm("你是鑫妹吗?").then((res) => {
                 store.isSelf = res;
                 init(store);
             });
-        })
+        });
         bindClick(document.getElementById("answer"), null, () => {
             initSummary(store);
-        })
+        });
+        let sheetIndex = 0;
+        document.getElementById("face").addEventListener("click", debounce(() => {
+            if (sheetIndex >= SHEET.length) {
+                showConfirm("你成功弹揍了小鑫鑫!", true);
+                sheetIndex = 0;
+                return;
+            }
+            voiceEffect(FREQUENCY[SHEET[sheetIndex++]]);
+        }, 500, true))
         if (store.version !== VERSION) {
             upgrade();
         }
