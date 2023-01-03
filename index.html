@@ -593,6 +593,9 @@
                 init(store);
             });
         })
+        bindClick(document.getElementById("answer"), null, () => {
+            initSummary(store);
+        })
         if (store.version !== VERSION) {
             upgrade();
         }
