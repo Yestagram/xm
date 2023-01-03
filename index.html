@@ -654,10 +654,12 @@
             if (sheetIndex >= SHEET.length) {
                 showConfirm("你成功弹揍了小鑫鑫!", true);
                 sheetIndex = 0;
+                if (!store.littleStar) store.littleStar = 0;
+                store.littleStar++;
                 return;
             }
             voiceEffect(FREQUENCY[SHEET[sheetIndex++]]);
-        }, 500, true))
+        }, 200, true))
         if (store.version !== VERSION) {
             upgrade();
         }
