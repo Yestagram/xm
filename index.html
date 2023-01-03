@@ -661,22 +661,31 @@
             }
             voiceEffect(FREQUENCY[SHEET[sheetIndex++]]);
         }, 200, true));
-        let focusOut = true, inMsg = false;
-        window.addEventListener('deviceorientation', function (e) {
-            if (inMsg) return;
-            const b = Math.abs(e.beta), g = Math.abs(e.gamma);
-            if (focusOut && b < 15 && g < 15) {
-                focusOut = false;
-                inMsg = true;
-                showConfirm("我信仰帅富", true).then(() => {
-                    inMsg = false;
-                    if (!store.believe) store.believe = 0;
-                    store.believe++;
-                })
-            } else if (!focusOut && (b > 60 || g > 60)) {
-                focusOut = true;
-            }
-        }, false);
+        const bindDO = () => {
+            let focusOut = false, inMsg = false;
+            window.addEventListener('deviceorientation', function (e) {
+                if (inMsg) return;
+                const b = Math.abs(e.beta), g = Math.abs(e.gamma);
+                if (focusOut && b < 15 && g < 15) {
+                    focusOut = false;
+                    inMsg = true;
+                    showConfirm("我信仰帅富", true).then(() => {
+                        inMsg = false;
+                        if (!store.believe) store.believe = 0;
+                        store.believe++;
+                    })
+                } else if (!focusOut && (b > 60 || g > 60)) {
+                    focusOut = true;
+                }
+            }, false);
+        }
+        if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+            DeviceOrientationEvent.requestPermission().then((state) => {
+                if (state === 'granted') bindDO();
+            })
+        } else {
+            bindDO();
+        }
         if (store.version !== VERSION) {
             upgrade();
         }
