@@ -699,10 +699,8 @@
         const bindDO = () => {
             window.addEventListener('deviceorientation', function (e) {
                 let b = e.beta;
-                if (b > 90) b = 90;
-                if (b < -90) b = -90;
                 $debugger.innerText = `b:${Math.round(b)}\n beta:${Math.round(e.beta)}\n gamma:${Math.round(e.gamma)}`;
-                $face.style.setProperty("--deg", `${b - 90}deg`);
+                $face.style.setProperty("--deg", `${90 - b}deg`);
 
             }, false);
         }
