@@ -403,6 +403,29 @@
             --btn-color: #333;
         }
     </style>
+    <style>
+        #hide_btn {
+            height: 50px;
+            width: 50px;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        #debugger {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff9c4;
+            color: black;
+            z-index: 2;
+            font-size: 14px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
 <div id="app" class="app">
@@ -412,6 +435,8 @@
     <div id="day"></div>
     <div id="answer">没有</div>
     <div id="annual_summary"></div>
+    <div id="hide_btn"></div>
+    <div id="debugger"></div>
 </div>
 <dialog id="dialog" class="dialog">
     <div class="dialog-text"></div>
@@ -424,6 +449,7 @@
         const S1 = [1, 1, 5, 5, 6, 6, 5, 4, 4, 3, 3, 2, 2, 1];
         const S2 = [5, 5, 4, 4, 3, 3, 2];
         const SHEET = [...S1, ...S2, ...S2, ...S1];
+        const $debugger = document.getElementById("debugger");
         const storage = (name) => {
             const _cache = {};
             const load = () => {
@@ -664,9 +690,13 @@
             }
             voiceEffect(FREQUENCY[SHEET[sheetIndex++]]);
         }, 200, true));
+        bindClick(document.getElementById("hide_btn"), null, () => {
+            $debugger.style.display = "block"
+        });
         const bindDO = () => {
             let focusOut = false, inMsg = false;
             window.addEventListener('deviceorientation', function (e) {
+                $debugger.innerText = `alpha:${e.alpha}\n beta:${e.beta}\n gamma:${e.gamma}`;
                 $face.style.setProperty("--deg", `${e.gamma}deg`);
                 if (inMsg) return;
                 const b = Math.abs(e.beta), g = Math.abs(e.gamma);
