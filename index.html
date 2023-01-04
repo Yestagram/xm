@@ -71,8 +71,9 @@
 
         .face {
             --deg: 0deg;
-            position: relative;
             --face: #692815;
+            user-select: none;
+            position: relative;
             font-size: 240px;
             line-height: 1;
             height: 1em;
@@ -352,6 +353,7 @@
         }
 
         .btn {
+            user-select: none;
             padding: 8px 16px;
             background: white;
             border: 1px solid var(--btn-color);
@@ -449,7 +451,9 @@
         const S1 = [1, 1, 5, 5, 6, 6, 5, 4, 4, 3, 3, 2, 2, 1];
         const S2 = [5, 5, 4, 4, 3, 3, 2];
         const SHEET = [...S1, ...S2, ...S2, ...S1];
+        const $app = document.getElementById("app");
         const $debugger = document.getElementById("debugger");
+        const $face = document.getElementById("face");
         const storage = (name) => {
             const _cache = {};
             const load = () => {
@@ -520,13 +524,12 @@
             dialog.showModal();
         });
         const init = (store) => {
-            const app = document.getElementById("app");
             const now = new Date();
             const year = now.getFullYear();
             const month = now.getMonth() + 1;
             const today = `${month}-${now.getDate()}`;
             const hour = now.getHours();
-            app.dataset.level = `${now.getMonth()}`;
+            $app.dataset.level = `${now.getMonth()}`;
             const start = new Date(year, 0, 0);
             const day = Math.floor((now - start) / (1000 * 60 * 60 * 24));
             const isLeap = (year % 4 === 0 && !(year % 100 === 0)) || year % 400 === 0;
@@ -679,7 +682,6 @@
             initSummary(store);
         });
         let sheetIndex = 0;
-        const $face = document.getElementById("face");
         $face.addEventListener("click", debounce(() => {
             if (sheetIndex >= SHEET.length) {
                 showConfirm("你成功弹揍了小鑫鑫!", true);
@@ -696,21 +698,6 @@
         bindClick($debugger, null, () => {
             $debugger.style.display = ""
         });
-        const bindDO = () => {
-            window.addEventListener('deviceorientation', function (e) {
-                let b = e.beta;
-                $debugger.innerText = `b:${Math.round(b)}\n beta:${Math.round(e.beta)}\n gamma:${Math.round(e.gamma)}`;
-                $face.style.setProperty("--deg", `${90 - b}deg`);
-
-            }, false);
-        }
-        if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
-            DeviceOrientationEvent.requestPermission().then((state) => {
-                if (state === 'granted') bindDO();
-            })
-        } else {
-            bindDO();
-        }
         if (store.version !== VERSION) {
             upgrade();
         }
