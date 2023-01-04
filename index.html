@@ -699,7 +699,7 @@
         const bindDO = () => {
             let focusOut = false, inMsg = false;
             window.addEventListener('deviceorientation', function (e) {
-                $debugger.innerText = `alpha:${e.alpha}\n beta:${e.beta}\n gamma:${e.gamma}`;
+                $debugger.innerText = `alpha:${Math.round(e.alpha)}\n beta:${Math.round(e.beta)}\n gamma:${Math.round(e.gamma)}`;
                 $face.style.setProperty("--deg", `${e.gamma}deg`);
                 if (inMsg) return;
                 const b = Math.abs(e.beta), g = Math.abs(e.gamma);
