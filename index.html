@@ -697,23 +697,13 @@
             $debugger.style.display = ""
         });
         const bindDO = () => {
-            let focusOut = false, inMsg = false;
             window.addEventListener('deviceorientation', function (e) {
-                $debugger.innerText = `alpha:${Math.round(e.alpha)}\n beta:${Math.round(e.beta)}\n gamma:${Math.round(e.gamma)}`;
-                $face.style.setProperty("--deg", `${e.gamma}deg`);
-                if (inMsg) return;
-                const b = Math.abs(e.beta), g = Math.abs(e.gamma);
-                if (focusOut && b < 15 && g < 15) {
-                    focusOut = false;
-                    inMsg = true;
-                    showConfirm("我信仰帅富", true).then(() => {
-                        inMsg = false;
-                        if (!store.believe) store.believe = 0;
-                        store.believe++;
-                    })
-                } else if (!focusOut && (b > 60 || g > 60)) {
-                    focusOut = true;
-                }
+                let b = e.beta;
+                if (b > 90) b = 90;
+                if (b < -90) b = -90;
+                $debugger.innerText = `b:${Math.round(b)}\n beta:${Math.round(e.beta)}\n gamma:${Math.round(e.gamma)}`;
+                $face.style.setProperty("--deg", `${b - 90}deg`);
+
             }, false);
         }
         if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
