@@ -693,6 +693,9 @@
         bindClick(document.getElementById("hide_btn"), null, () => {
             $debugger.style.display = "block"
         });
+        bindClick($debugger, null, () => {
+            $debugger.style.display = ""
+        });
         const bindDO = () => {
             let focusOut = false, inMsg = false;
             window.addEventListener('deviceorientation', function (e) {
