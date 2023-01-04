@@ -70,6 +70,7 @@
         }
 
         .face {
+            --deg: 0deg;
             position: relative;
             --face: #692815;
             font-size: 240px;
@@ -82,10 +83,11 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             cursor: grab;
             box-shadow: -6px 6px 32px 15px #00000040;
+            transform: rotate(var(--deg));
         }
 
         .face:active {
-            transform: scale(0.95);
+            transform: scale(0.95) rotate(var(--deg));
             cursor: grabbing;
             box-shadow: -6px 6px 32px 15px #00000040;
         }
@@ -615,7 +617,7 @@
             const gainNode = audioCtx.createGain();
             oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-            oscillator.type = 'sine';
+            oscillator.type = 'square';
             oscillator.frequency.value = frequency;
             gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
             gainNode.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 0.01);
@@ -651,7 +653,8 @@
             initSummary(store);
         });
         let sheetIndex = 0;
-        document.getElementById("face").addEventListener("click", debounce(() => {
+        const $face = document.getElementById("face");
+        $face.addEventListener("click", debounce(() => {
             if (sheetIndex >= SHEET.length) {
                 showConfirm("你成功弹揍了小鑫鑫!", true);
                 sheetIndex = 0;
@@ -664,6 +667,7 @@
         const bindDO = () => {
             let focusOut = false, inMsg = false;
             window.addEventListener('deviceorientation', function (e) {
+                $face.style.setProperty("--deg", `${e.gamma}deg`);
                 if (inMsg) return;
                 const b = Math.abs(e.beta), g = Math.abs(e.gamma);
                 if (focusOut && b < 15 && g < 15) {
