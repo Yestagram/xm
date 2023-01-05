@@ -756,7 +756,11 @@
             const start = () => {
                 if (listening) return;
                 listening = true;
-                recognition.start();
+                try {
+                    recognition.start();
+                } catch (err) {
+
+                }
             }
             const stop = () => {
                 recognition.stop();
