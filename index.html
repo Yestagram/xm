@@ -17,10 +17,10 @@
         }
 
         .long-press-able {
-            -webkit-touch-callout:none;
-            -webkit-user-select:none;
-            -moz-user-select:none;
-            user-select:none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
         }
 
         .app {
@@ -437,39 +437,103 @@
     </style>
     <style>
         #voice_input {
-            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            width: 72px;
-            height: 72px;
-            background: #383838;
-            border-radius: 50%;
-            right: 32px;
+            position: absolute;
+            left: 50%;
+            margin-left: -36px;
             bottom: 32px;
-            box-shadow: 1px 2px 6px 1px #00000087;
             transition: transform ease 0.2s;
             z-index: 4;
         }
 
-        #voice_input:after {
-            --voico-decorate: #1d1d1d;
-            content: "";
-            display: block;
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: var(--voico-decorate);
-            border-radius: 50%;
-            left: 50%;
-            top: 50%;
-            margin-top: -6px;
-            margin-left: -6px;
-            box-shadow: -24px 0 0 var(--voico-decorate), 24px 0 0 var(--voico-decorate),
-            -12px -18px 0 var(--voico-decorate), 12px -18px 0 var(--voico-decorate),
-            -12px 18px 0 var(--voico-decorate), 12px 18px 0 var(--voico-decorate);
-        }
-
         #voice_input:active {
             transform: scale(0.95);
+        }
+
+        .voice-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            background: #1996ff;
+            border-radius: 50%;
+            box-shadow: 1px 2px 6px 1px #00000087;
+        }
+
+        #voice_input:active::before {
+            opacity: 0;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            content: "";
+            height: 100%;
+            width: 100%;
+            background: #adadad;
+            border-radius: 100%;
+            animation: ripple 3s 0s infinite cubic-bezier(0.65, 0, 0.34, 1);
+            z-index: -1;
+        }
+
+        .gg-mic {
+            box-sizing: border-box;
+            position: relative;
+            display: block;
+            transform: scale(1.2);
+            width: 16px;
+            height: 12px;
+            border-bottom-left-radius: 120px;
+            border-bottom-right-radius: 120px;
+            border: 2px solid;
+            border-top: 0;
+            margin-top: 3px
+        }
+
+        .gg-mic::after,
+        .gg-mic::before {
+            content: "";
+            display: block;
+            box-sizing: border-box;
+            position: absolute
+        }
+
+        .gg-mic::after {
+            border: 2px solid;
+            width: 8px;
+            height: 18px;
+            left: 2px;
+            top: -10px;
+            border-radius: 4px
+        }
+
+        .gg-mic::before {
+            width: 10px;
+            height: 4px;
+            top: 12px;
+            left: 1px;
+            border-right: 4px solid transparent;
+            box-shadow: 0 2px 0,
+            inset -2px 0 0
+        }
+
+        @keyframes ripple {
+            from {
+                opacity: 1;
+                transform: scale3d(0.75, 0.75, 1);
+            }
+            to {
+                opacity: 0;
+                transform: scale3d(2, 2, 1);
+            }
         }
     </style>
 </head>
@@ -483,7 +547,11 @@
     <div id="annual_summary"></div>
     <div id="hide_btn"></div>
     <div id="debugger"></div>
-    <div id="voice_input" class="long-press-able"></div>
+    <div id="voice_input" class="long-press-able">
+        <div class="voice-btn">
+            <i class="gg-mic"></i>
+        </div>
+    </div>
 </div>
 <dialog id="dialog" class="dialog">
     <div class="dialog-text"></div>
