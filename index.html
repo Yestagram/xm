@@ -706,6 +706,28 @@
                 }
             })
         }
+        const answerWithSpeak = (text) => {
+            if (window.speechSynthesis) {
+                speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+            }
+            return showConfirm(text, true);
+        }
+        const answer = (rawText = "") => {
+            let text = rawText.toLowerCase();
+            if (text.includes("我信仰帅富") || text.includes("我姓杨帅富") || text.includes("我信仰帅服") || text.includes("我信仰衰书")) {
+                answerWithSpeak("我信仰帅富!").then(() => {
+                    if (!store.believe) store.believe = 0;
+                    store.believe++;
+                })
+            } else if (text.includes("more, yeah") || text.includes("魔夜") || text.includes("末页") || text.includes("膜叶")) {
+                answerWithSpeak("膜叶!").then(() => {
+                    if (!store.worship) store.worship = 0;
+                    store.worship++;
+                })
+            } else if (text.includes("你妹找到女朋友了") || text.includes("新妹找到女朋友了")) {
+                answerWithSpeak("没有!鑫妹没有找到女朋友");
+            }
+        }
         const bindVoiceInput = () => {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) return;
@@ -718,6 +740,7 @@
                 const text = res[0].transcript;
                 $debugger.innerText = text;
                 if (res.isFinal) {
+                    answer(text);
                 } else {
                 }
             }
