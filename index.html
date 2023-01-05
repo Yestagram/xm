@@ -714,12 +714,12 @@
         }
         const answer = (rawText = "") => {
             let text = rawText.toLowerCase();
-            if (text.includes("我信仰帅富") || text.includes("我姓杨帅富") || text.includes("我信仰帅服") || text.includes("我信仰衰书")) {
+            if (text.includes("我信仰帅富") || text.includes("我姓杨帅富") || text.includes("我信仰帅服") || text.includes("我信仰帅傅")) {
                 answerWithSpeak("我信仰帅富!").then(() => {
                     if (!store.believe) store.believe = 0;
                     store.believe++;
                 })
-            } else if (text.includes("more, yeah") || text.includes("魔夜") || text.includes("末页") || text.includes("膜叶")) {
+            } else if (text.includes("摩耶") || text.includes("魔夜") || text.includes("无夜") || text.includes("末页") || text.includes("膜叶")) {
                 answerWithSpeak("膜叶!").then(() => {
                     if (!store.worship) store.worship = 0;
                     store.worship++;
@@ -734,6 +734,7 @@
             const recognition = new SpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
+            recognition.lang = "zh-cn";
             recognition.onresult = (event) => {
                 const last = event.results.length - 1;
                 const res = event.results[last];
