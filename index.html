@@ -428,6 +428,43 @@
             text-align: left;
         }
     </style>
+    <style>
+        #voice_input {
+            position: absolute;
+            cursor: pointer;
+            width: 72px;
+            height: 72px;
+            background: #383838;
+            border-radius: 50%;
+            right: 32px;
+            bottom: 32px;
+            box-shadow: 1px 2px 6px 1px #00000087;
+            transition: transform ease 0.2s;
+            z-index: 4;
+        }
+
+        #voice_input:after {
+            --voico-decorate: #1d1d1d;
+            content: "";
+            display: block;
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--voico-decorate);
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            margin-top: -6px;
+            margin-left: -6px;
+            box-shadow: -24px 0 0 var(--voico-decorate), 24px 0 0 var(--voico-decorate),
+            -12px -18px 0 var(--voico-decorate), 12px -18px 0 var(--voico-decorate),
+            -12px 18px 0 var(--voico-decorate), 12px 18px 0 var(--voico-decorate);
+        }
+
+        #voice_input:active {
+            transform: scale(0.95);
+        }
+    </style>
 </head>
 <body>
 <div id="app" class="app">
@@ -439,6 +476,7 @@
     <div id="annual_summary"></div>
     <div id="hide_btn"></div>
     <div id="debugger"></div>
+    <div id="voice_input"></div>
 </div>
 <dialog id="dialog" class="dialog">
     <div class="dialog-text"></div>
@@ -668,6 +706,42 @@
                 }
             })
         }
+        const bindVoiceInput = () => {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) return;
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.onresult = (event) => {
+                const last = event.results.length - 1;
+                const res = event.results[last];
+                const text = res[0].transcript;
+                $debugger.innerText = text;
+                if (res.isFinal) {
+                } else {
+                }
+            }
+            const $input = document.getElementById("voice_input");
+            let listening = false;
+            const start = (e) => {
+                if (listening) return;
+                listening = true;
+                recognition.start();
+            }
+            const stop = (e) => {
+                recognition.stop();
+                listening = false;
+            }
+            $input.addEventListener("mousedown", start);
+            $input.addEventListener("mouseup", stop);
+            $input.addEventListener("touchstart", start);
+            $input.addEventListener("touchend", stop);
+            $input.addEventListener("contextmenu", (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+            })
+        }
+        bindVoiceInput();
 
         const store = storage("XM");
         bindClick(document.getElementById("day"), (e) => {
