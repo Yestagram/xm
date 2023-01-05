@@ -16,6 +16,13 @@
             padding: 0;
         }
 
+        .long-press-able {
+            -webkit-touch-callout:none;
+            -webkit-user-select:none;
+            -moz-user-select:none;
+            user-select:none;
+        }
+
         .app {
             display: flex;
             flex-direction: column;
@@ -430,7 +437,6 @@
     </style>
     <style>
         #voice_input {
-            user-select: none;
             position: absolute;
             cursor: pointer;
             width: 72px;
@@ -469,7 +475,7 @@
 </head>
 <body>
 <div id="app" class="app">
-    <div id="face" class="face">
+    <div id="face" class="face long-press-able">
         <div class="face-decorate"></div>
     </div>
     <div id="day"></div>
@@ -477,7 +483,7 @@
     <div id="annual_summary"></div>
     <div id="hide_btn"></div>
     <div id="debugger"></div>
-    <div id="voice_input"></div>
+    <div id="voice_input" class="long-press-able"></div>
 </div>
 <dialog id="dialog" class="dialog">
     <div class="dialog-text"></div>
