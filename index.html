@@ -715,7 +715,7 @@
         }
         const answer = (rawText = "") => {
             let text = rawText.toLowerCase();
-            if (text.includes("我信仰帅富") || text.includes("我姓杨帅富") || text.includes("我信仰帅服") || text.includes("我信仰帅傅")) {
+            if (text.includes("我信仰帅富") || text.includes("我信仰帅府") || text.includes("我姓杨帅富") || text.includes("我信仰帅服") || text.includes("我信仰帅傅")) {
                 answerWithSpeak("我信仰帅富!").then(() => {
                     if (!store.believe) store.believe = 0;
                     store.believe++;
@@ -727,7 +727,10 @@
                 })
             } else if (text.includes("你妹找到女朋友了") || text.includes("新妹找到女朋友了")) {
                 answerWithSpeak("没有!鑫妹没有找到女朋友");
+            } else {
+                return false;
             }
+            return true;
         }
         const bindVoiceInput = () => {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -742,18 +745,20 @@
                 const text = res[0].transcript;
                 $debugger.innerText = text;
                 if (res.isFinal) {
-                    answer(text);
-                } else {
+                    const a = answer(text);
+                    if (a) {
+                        stop();
+                    }
                 }
             }
             const $input = document.getElementById("voice_input");
             let listening = false;
-            const start = (e) => {
+            const start = () => {
                 if (listening) return;
                 listening = true;
                 recognition.start();
             }
-            const stop = (e) => {
+            const stop = () => {
                 recognition.stop();
                 listening = false;
             }
