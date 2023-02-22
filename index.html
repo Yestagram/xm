@@ -565,6 +565,7 @@
         const S1 = [1, 1, 5, 5, 6, 6, 5, 4, 4, 3, 3, 2, 2, 1];
         const S2 = [5, 5, 4, 4, 3, 3, 2];
         const SHEET = [...S1, ...S2, ...S2, ...S1];
+        const BIRTHDAY_SHEET = [262, 262, 294, 262, 349, 330, 262, 262, 294, 262, 392, 349, 262, 262, 523, 440, 349, 330, 294, 466, 466, 440, 349, 392, 349];
         const $app = document.getElementById("app");
         const $debugger = document.getElementById("debugger");
         const $face = document.getElementById("face");
@@ -678,6 +679,10 @@
                 store.latestHourDate = markDate;
             }
             if (month === 12 && now.getDate() > 20) initSummary(store);
+            if (today === "2-23") {
+                showConfirm(`🎊🎊🎊\n鑫妹!\n生日快乐！！\n🎂🎂🎂\n🎉🎉🎉`, true);
+                playSong(BIRTHDAY_SHEET);
+            }
         }
         const initSummary = (store) => {
             const summary = document.getElementById("annual_summary");
@@ -767,6 +772,17 @@
             oscillator.start(audioCtx.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);
             oscillator.stop(audioCtx.currentTime + 1);
+        }
+        const playSong = (sheet = []) => {
+            let i = 0;
+            const flag = setInterval(() => {
+                if (i >= sheet.length) {
+                    clearInterval(flag);
+                    return;
+                }
+                voiceEffect(sheet[i])
+                i++;
+            }, 500);
         }
         const bindClick = (el, onClick, onDoubleClick, delay = 200) => {
             let lastClick = 0;
