@@ -113,6 +113,10 @@
             background: linear-gradient(180deg, #9fa8da, #fdd835);
         }
 
+        [data-role="joker"] .face {
+            background: linear-gradient(180deg, #ffffff, #dddddd);
+        }
+
         .face-decorate {
             position: absolute;
         }
@@ -209,6 +213,18 @@
             animation: cry-2 1s linear infinite;
         }
 
+        [data-role="joker"] .face:after {
+            animation: none;
+            width: 0.2em;
+            height: 0.05em;
+            left: 0.4em;
+            top: 0.7em;
+            border-radius: 0.05em 0.05em 0.1em 0.1em;
+            background: var(--face);
+            border: none;
+            outline: 0.02em solid #f80000;
+        }
+
         [data-level="0"] .face-decorate,
         [data-level="6"] .face-decorate {
             --decorate: #ff6464;
@@ -267,6 +283,35 @@
 
         [data-level="11"] .face-decorate {
             animation: tear-2 1s linear infinite;
+        }
+
+        [data-role="joker"] .face-decorate {
+            --decorate: #ffb9b9;
+            width: 0.2em;
+            height: 0.15em;
+            left: 0.1em;
+            top: 0.55em;
+            border-radius: 50%;
+            background: var(--decorate);
+            box-shadow: 0.6em 0 var(--decorate);
+            animation: none;
+        }
+
+
+        [data-role="joker"] .face-decorate:after {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 0.2em;
+            height: 0.2em;
+            background: red;
+            border-radius: 50%;
+            border: none;
+            left: 0.3em;
+            top: -0.1em;
+            z-index: 1;
+            --hair: #ff5757;
+            box-shadow: -96px -96px 0 12px var(--hair), -56px -112px 0 6px var(--hair), -112px -56px 0 6px var(--hair), 96px -96px 0 12px var(--hair), 56px -112px 0 6px var(--hair), 112px -56px 0 6px var(--hair);
         }
 
         @keyframes blink {
@@ -566,6 +611,7 @@
         const S2 = [5, 5, 4, 4, 3, 3, 2];
         const SHEET = [...S1, ...S2, ...S2, ...S1];
         const BIRTHDAY_SHEET = [262, 262, 294, 262, 349, 330, 262, 262, 294, 262, 392, 349, 262, 262, 523, 440, 349, 330, 294, 466, 466, 440, 349, 392, 349];
+        const JOKER_DAYS = ["2-14", "5-20"];
         const $app = document.getElementById("app");
         const $debugger = document.getElementById("debugger");
         const $face = document.getElementById("face");
@@ -682,6 +728,9 @@
             if (today === "2-23") {
                 showConfirm(`🎊🎊🎊\n鑫妹!\n生日快乐！！\n🎂🎂🎂\n🎉🎉🎉`, true);
                 playSong(BIRTHDAY_SHEET);
+            }
+            if (JOKER_DAYS.includes(today)) {
+                $app.dataset.role = "joker";
             }
         }
         const initSummary = (store) => {
